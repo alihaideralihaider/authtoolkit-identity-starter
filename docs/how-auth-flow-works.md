@@ -10,6 +10,8 @@ Landing page → Login → AuthToolkit Identity → Email/OTP verification → B
 
 AuthToolkit Identity verifies the person. Your app creates the session.
 
+`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
+
 ## 1. Landing page
 
 Route:
@@ -134,6 +136,10 @@ AuthToolkit Identity says: “This person is verified.”
 Your app says: “Great, I will create a session and let them into my app.”
 ```
 
+### Does the SDK create my app session?
+
+No. In v0.1.0, the SDK gives you helpers for the Identity flow, but your app still creates its own session cookie after Identity verifies the user. The starter repo shows one simple session pattern you can copy or customize.
+
 ### What is a callback URL?
 
 A callback URL is the page in your app where AuthToolkit Identity sends the user after verification.
@@ -219,6 +225,8 @@ The starter repo is a full working example app.
 
 Use it when you want a clean app you can clone, run, and customize.
 
+Clone the starter repo to see the full working login and session pattern.
+
 The SDK is a package for existing apps.
 
 Use it when you want to add AuthToolkit Identity helpers to your current app.
@@ -234,6 +242,8 @@ Existing app:
 ```bash
 npm install @authtoolkit/identity
 ```
+
+Install `@authtoolkit/identity` for helpers, then create your own app session in your callback route.
 
 ### Where does the customer go after login?
 
@@ -271,3 +281,5 @@ Your app still owns:
 - session cookie
 
 Identity gives your app a trusted verification result. Your app decides what to do next.
+
+SDK v0.1 does not replace full auth/session management.

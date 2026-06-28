@@ -10,6 +10,8 @@ Landing page → Login → AuthToolkit Identity → Email/OTP verification → B
 
 AuthToolkit Identity verifies the person. Your app creates the session.
 
+`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
+
 This starter is for developers and vibe coders who want a clear, cloneable example without a custom auth system, database, or enterprise dashboard.
 
 ## What you get
@@ -69,13 +71,19 @@ Use the starter repo for a new app you want to clone, run, and customize:
 git clone https://github.com/alihaideralihaider/authtoolkit-identity-starter.git
 ```
 
+Clone the starter repo to see the full working login and session pattern.
+
 Use the SDK for an existing app:
 
 ```bash
 npm install @authtoolkit/identity
 ```
 
-The starter shows the full redirect login pattern. The SDK gives existing apps AuthToolkit Identity helpers; it does not replace your whole app or create your app session for you.
+Install `@authtoolkit/identity` for helpers, then create your own app session in your callback route. The SDK gives existing apps AuthToolkit Identity helpers; it does not replace your whole app or create your app session for you.
+
+### Does the SDK create my app session?
+
+No. In v0.1.0, the SDK gives you helpers for the Identity flow, but your app still creates its own session cookie after Identity verifies the user. The starter repo shows one simple session pattern you can copy or customize.
 
 ## Environment variables
 
@@ -97,6 +105,8 @@ Browser-safe values may use `NEXT_PUBLIC_*`:
 
 Use `.env.example` as the template. Do not commit `.env.local`.
 
+Server secrets stay in `.env.local` during local development. Do not put the API key or access evaluation secret in browser code.
+
 ## Test the protected shell
 
 Before signing in, opening `/app` should send you to `/login`.
@@ -106,6 +116,8 @@ After a verified Identity callback, the starter creates a minimal signed HTTP-on
 That session is intentionally small. Replace it with your app account model when you build a real product.
 
 Your app owns account pages, cart, orders, dashboard, permissions, app data, and the session cookie.
+
+SDK v0.1 does not replace full auth/session management.
 
 ## Customize the starter
 

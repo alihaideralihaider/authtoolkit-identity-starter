@@ -13,6 +13,10 @@ These must stay server-only:
 
 Server secrets stay in `.env.local` during local development. Never put the API key or access evaluation secret in browser code or `NEXT_PUBLIC_*`.
 
+AuthToolkit Identity verifies the person. Your app creates the session. The app session cookie belongs to your app.
+
+`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
+
 ## Public env variables
 
 These may be exposed to browser code:

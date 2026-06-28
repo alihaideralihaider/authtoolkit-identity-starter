@@ -10,6 +10,8 @@ Landing page → Login → AuthToolkit Identity → Email/OTP verification → B
 
 AuthToolkit Identity verifies the person. Your app creates the session.
 
+`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
+
 ## 1. Clone the repo
 
 ```bash
@@ -70,6 +72,8 @@ NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PUBLISHABLE_KEY=...
 Use a long random value for `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`. It signs the starter demo session cookie.
 
 Server secrets stay in `.env.local`. Do not commit `.env.local`, and do not put the API key or access evaluation secret in browser code.
+
+The app session cookie belongs to your app. SDK v0.1 does not replace full auth/session management.
 
 ## 6. Add the callback URL to Identity allowed origins
 
