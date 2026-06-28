@@ -1,18 +1,30 @@
 # AuthToolkit Identity Starter
 
-A small public starter app for adding AuthToolkit Identity to a Next.js app.
+A small Next.js App Router starter for adding AuthToolkit Identity to your app.
 
-Flow:
+It gives you the basic product flow most apps need:
 
 ```text
-Landing page -> Sign in with AuthToolkit Identity -> callback -> protected app shell -> logout
+Landing page -> login -> AuthToolkit Identity -> callback -> protected app shell -> logout
 ```
 
-This project is intentionally simple for developers and vibe coders. It uses Next.js App Router and a server-capable runtime so the callback can create a minimal HTTP-only starter session.
+This starter is for developers and vibe coders who want a clear, cloneable example without a custom auth system, database, or enterprise dashboard.
 
-## Run locally
+## What you get
+
+- A landing page at `/`
+- A simple login page at `/login`
+- A hosted Identity start route at `/auth/identity/start`
+- A safe callback route at `/auth/identity/callback`
+- A protected app shell at `/app`
+- Logout at `/logout`
+- Beginner-friendly docs and AI-agent guidance
+
+## Quick start
 
 ```bash
+git clone https://github.com/alihaideralihaider/authtoolkit-identity-starter.git
+cd authtoolkit-identity-starter
 npm install
 cp .env.example .env.local
 npm run dev
@@ -24,9 +36,32 @@ Open:
 http://localhost:3000
 ```
 
-## Required env variables
+## Set up AuthToolkit Identity
 
-Server-only:
+You need an AuthToolkit Identity project before the hosted sign-in flow can complete.
+
+At a high level:
+
+1. Create an Identity project.
+2. Copy the starter credentials into `.env.local`.
+3. Set a long random `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`.
+4. Add this local origin to your Identity allowed return origins:
+
+```text
+http://localhost:3000
+```
+
+Your local callback route is:
+
+```text
+http://localhost:3000/auth/identity/callback
+```
+
+For the full beginner walkthrough, use [docs/setup-guide.md](docs/setup-guide.md).
+
+## Environment variables
+
+Server-only values stay on the server and must never go in `NEXT_PUBLIC_*`:
 
 - `AUTHTOOLKIT_IDENTITY_BASE_URL`
 - `AUTHTOOLKIT_IDENTITY_PROJECT_ID`
@@ -35,72 +70,50 @@ Server-only:
 - `AUTHTOOLKIT_IDENTITY_ACCESS_EVALUATION_SECRET`
 - `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`
 
-Public/browser-safe:
+Browser-safe values may use `NEXT_PUBLIC_*`:
 
 - `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL`
 - `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PROJECT_ID`
 - `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_CLIENT_ID`
 - `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PUBLISHABLE_KEY`
 
-Never put server-only values in `NEXT_PUBLIC_*`.
+Use `.env.example` as the template. Do not commit `.env.local`.
 
-## Add callback URL to Identity allowed origins
+## Test the protected shell
 
-For local development, add this origin to your AuthToolkit Identity project's allowed return origins:
+Before signing in, opening `/app` should send you to `/login`.
 
-```text
-http://localhost:3000
-```
+After a verified Identity callback, the starter creates a minimal signed HTTP-only demo session and `/app` opens.
 
-Your callback route is:
+That session is intentionally small. Replace it with your app account model when you build a real product.
 
-```text
-http://localhost:3000/auth/identity/callback
-```
+## Customize the starter
 
-For production, add your deployed app origin, for example:
+Good first files to edit:
 
-```text
-https://your-app.example
-```
+- `app/page.tsx` for the landing page
+- `app/login/page.tsx` for sign-in copy
+- `app/app/page.tsx` for the protected shell
+- `app/globals.css` for styling
 
-## Customize the landing page
+Keep `/auth/identity/start`, `/auth/identity/callback`, and `src/lib/session.ts` safe unless you know exactly what you are changing.
 
-Edit:
+## Deeper docs
 
-- `app/page.tsx`
-- `app/login/page.tsx`
-- `app/globals.css`
-
-Keep the CTA pointing to `/auth/identity/start` unless you intentionally change the auth flow.
-
-## Protect a page
-
-Use the pattern in:
-
-```text
-app/app/page.tsx
-```
-
-It calls `getStarterSession()` and redirects to `/login` if there is no valid starter session.
+- [Beginner setup guide](docs/setup-guide.md)
+- [Integration checklist](docs/integration-checklist.md)
+- [AI customization prompt](docs/ai-customization-prompt.md)
+- [How the auth flow works](docs/how-auth-flow-works.md)
+- [Security notes](docs/security-notes.md)
+- [Customization recipes](docs/customization-recipes.md)
+- [Agent guidance](AGENTS.md)
+- [Claude Code guidance](CLAUDE.md)
+- [LLM project map](llms.txt)
 
 ## Deploy
 
-Deploy to any host that supports Next.js server routes. Do not use static export for this starter.
+Deploy to a server-capable host that supports Next.js server routes and HTTP-only cookies.
 
-Good options:
+Good options include Vercel, Netlify with Next support, Cloudflare Workers/OpenNext, or a Node server host.
 
-- Vercel
-- Netlify with Next support
-- Cloudflare Workers/OpenNext
-- Node server hosting
-
-Set all server-only env variables in your host's secret/env settings.
-
-## Security reminders
-
-- This starter session is a demo session. Replace it with your own account lookup.
-- Keep `AUTHTOOLKIT_IDENTITY_SESSION_SECRET` long and random.
-- Do not log raw Identity responses if they may contain sensitive data.
-- Do not expose API keys, access evaluation secrets, or session secrets to the browser.
-- Keep callback errors generic and customer-safe.
+Do not use static export for this starter. The callback and session cookie need server behavior.
