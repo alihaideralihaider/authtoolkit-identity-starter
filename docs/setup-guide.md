@@ -5,8 +5,10 @@ This guide walks you from a fresh clone to a local protected app shell.
 The starter keeps the flow simple:
 
 ```text
-Landing page -> login -> AuthToolkit Identity -> callback -> protected app shell
+Landing page → Login → AuthToolkit Identity → Email/OTP verification → Back to your callback → Your app creates session → Customer lands in /account
 ```
+
+AuthToolkit Identity verifies the person. Your app creates the session.
 
 ## 1. Clone the repo
 
@@ -67,7 +69,7 @@ NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PUBLISHABLE_KEY=...
 
 Use a long random value for `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`. It signs the starter demo session cookie.
 
-Do not commit `.env.local`.
+Server secrets stay in `.env.local`. Do not commit `.env.local`, and do not put the API key or access evaluation secret in browser code.
 
 ## 6. Add the callback URL to Identity allowed origins
 
@@ -88,6 +90,8 @@ For production, add your deployed app origin too, for example:
 ```text
 https://your-app.example
 ```
+
+Allowed return origins protect users from unsafe redirects. If the return URL is not allowed, Identity blocks it and shows a safe error.
 
 ## 7. Run the app locally
 
@@ -141,6 +145,8 @@ Safe callback states include:
 If the callback is opened directly without an Identity result, it should show a safe missing state.
 
 If Identity verifies the user, the starter creates a minimal signed HTTP-only demo session.
+
+For your production app, replace that demo session with your own account, cart, orders, dashboard, permissions, and session-cookie model.
 
 ## 11. Open protected `/app`
 

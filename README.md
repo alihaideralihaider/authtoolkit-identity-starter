@@ -5,8 +5,10 @@ A small Next.js App Router starter for adding AuthToolkit Identity to your app.
 It gives you the basic product flow most apps need:
 
 ```text
-Landing page -> login -> AuthToolkit Identity -> callback -> protected app shell -> logout
+Landing page → Login → AuthToolkit Identity → Email/OTP verification → Back to your callback → Your app creates session → Customer lands in /account
 ```
+
+AuthToolkit Identity verifies the person. Your app creates the session.
 
 This starter is for developers and vibe coders who want a clear, cloneable example without a custom auth system, database, or enterprise dashboard.
 
@@ -59,6 +61,22 @@ http://localhost:3000/auth/identity/callback
 
 For the full beginner walkthrough, use [docs/setup-guide.md](docs/setup-guide.md).
 
+## Starter repo or SDK?
+
+Use the starter repo for a new app you want to clone, run, and customize:
+
+```bash
+git clone https://github.com/alihaideralihaider/authtoolkit-identity-starter.git
+```
+
+Use the SDK for an existing app:
+
+```bash
+npm install @authtoolkit/identity
+```
+
+The starter shows the full redirect login pattern. The SDK gives existing apps AuthToolkit Identity helpers; it does not replace your whole app or create your app session for you.
+
 ## Environment variables
 
 Server-only values stay on the server and must never go in `NEXT_PUBLIC_*`:
@@ -86,6 +104,8 @@ Before signing in, opening `/app` should send you to `/login`.
 After a verified Identity callback, the starter creates a minimal signed HTTP-only demo session and `/app` opens.
 
 That session is intentionally small. Replace it with your app account model when you build a real product.
+
+Your app owns account pages, cart, orders, dashboard, permissions, app data, and the session cookie.
 
 ## Customize the starter
 

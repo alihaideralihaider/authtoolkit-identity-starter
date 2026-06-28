@@ -11,7 +11,7 @@ These must stay server-only:
 - `AUTHTOOLKIT_IDENTITY_ACCESS_EVALUATION_SECRET`
 - `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`
 
-Never put these in `NEXT_PUBLIC_*`.
+Server secrets stay in `.env.local` during local development. Never put the API key or access evaluation secret in browser code or `NEXT_PUBLIC_*`.
 
 ## Public env variables
 
@@ -41,6 +41,8 @@ https://your-app.example
 ```
 
 Do not allow wildcard origins unless you fully understand the risk.
+
+Allowed return origins protect users from unsafe redirects. If a return URL is not allowed, AuthToolkit Identity blocks it and shows a safe error.
 
 ## Session secret
 
