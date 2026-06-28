@@ -1,0 +1,44 @@
+# AuthToolkit Identity Starter
+
+Project name: authtoolkit-identity-starter
+
+Purpose: A beginner-friendly Next.js App Router starter that shows how to add AuthToolkit Identity to an app.
+
+Core flow:
+/ -> /login -> /auth/identity/start -> hosted AuthToolkit Identity -> /auth/identity/callback -> /app -> /logout
+
+Important routes:
+- /: landing page
+- /login: sign-in page
+- /auth/identity/start: redirects to hosted AuthToolkit Identity
+- /auth/identity/callback: handles safe callback states and creates a minimal starter session when verified
+- /app: protected starter app shell
+- /logout: clears starter session
+
+Important docs:
+- README.md
+- docs/integration-checklist.md
+- docs/ai-customization-prompt.md
+- docs/how-auth-flow-works.md
+- docs/security-notes.md
+- docs/customization-recipes.md
+
+Safe customization areas:
+- app/page.tsx
+- app/login/page.tsx
+- app/app/page.tsx
+- app/globals.css
+- README.md
+- docs/
+
+Dangerous areas not to modify casually:
+- app/auth/identity/start/route.ts
+- app/auth/identity/callback/route.ts
+- src/lib/session.ts
+- .env.example
+
+Security reminders:
+- Never expose server secrets in browser code.
+- Never move server secrets into NEXT_PUBLIC_*.
+- Do not remove callback safety states.
+- Protect new app pages with getStarterSession().
