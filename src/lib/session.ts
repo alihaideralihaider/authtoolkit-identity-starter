@@ -1,18 +1,35 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
-import { readEnv } from "./env";
+import { getIdentityApiKey, getIdentityProjectId } from "./env";
 
 export const starterSessionCookieName = "atk_identity_starter_session";
 
-type StarterSession = {
+export type StarterIdentityUser = {
+  id: string;
+  email?: string;
+  phone?: string;
+  emailVerified?: boolean;
+  phoneVerified?: boolean;
+};
+
+export type StarterSession = {
   connectedAt: string;
+  identityUser: StarterIdentityUser;
+  projectId: string;
   provider: "authtoolkit_identity";
   status: "verified";
 };
 
-export async function createStarterSessionCookie(): Promise<string> {
+export async function createStarterSessionCookie(identityUser: StarterIdentityUser): Promise<string> {
+  const projectId = getIdentityProjectId();
+  if (!projectId) {
+    throw new Error("Missing AUTHTOOLKIT_IDENTITY_PROJECT_ID");
+  }
+
   const session: StarterSession = {
     connectedAt: new Date().toISOString(),
+    identityUser,
+    projectId,
     provider: "authtoolkit_identity",
     status: "verified"
   };
@@ -30,7 +47,11 @@ export async function getStarterSession(): Promise<StarterSession | null> {
 
   try {
     const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
-    if (parsed?.provider === "authtoolkit_identity" && parsed?.status === "verified") {
+    if (
+      parsed?.provider === "authtoolkit_identity" &&
+      parsed?.status === "verified" &&
+      parsed?.identityUser?.id
+    ) {
       return parsed as StarterSession;
     }
   } catch {
@@ -51,9 +72,9 @@ export function getSessionCookieOptions() {
 }
 
 function sign(payload: string): string {
-  const secret = readEnv("AUTHTOOLKIT_IDENTITY_SESSION_SECRET");
+  const secret = getIdentityApiKey();
   if (!secret) {
-    throw new Error("Missing AUTHTOOLKIT_IDENTITY_SESSION_SECRET");
+    throw new Error("Missing AUTHTOOLKIT_IDENTITY_API_KEY");
   }
   return createHmac("sha256", secret).update(payload).digest("base64url");
 }

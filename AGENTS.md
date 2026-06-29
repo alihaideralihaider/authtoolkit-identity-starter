@@ -16,8 +16,9 @@ Do not remove or bypass the AuthToolkit Identity start/callback routes unless th
 
 - Do not expose server env values in browser code, logs, docs, screenshots, or generated examples.
 - Do not move server secrets into `NEXT_PUBLIC_*` variables.
-- Do not print `AUTHTOOLKIT_IDENTITY_API_KEY`, `AUTHTOOLKIT_IDENTITY_ACCESS_EVALUATION_SECRET`, or `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`.
-- Do not remove callback safety states: verified, pending, missing, failed.
+- Do not print `AUTHTOOLKIT_IDENTITY_API_KEY`.
+- Do not create a session just because the callback URL was reached.
+- Exchange the callback code with AuthToolkit Identity before creating a starter session.
 - Keep callback errors generic and safe.
 - Protect new app pages by checking the starter session with `getStarterSession()`.
 

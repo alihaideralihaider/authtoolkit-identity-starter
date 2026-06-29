@@ -10,3 +10,11 @@ export function getIdentityBaseUrl(): string {
 export function getPublicIdentityBaseUrl(): string {
   return (readEnv("NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL") ?? getIdentityBaseUrl()).replace(/\/+$/, "");
 }
+
+export function getIdentityProjectId(): string | undefined {
+  return readEnv("AUTHTOOLKIT_IDENTITY_PROJECT_ID");
+}
+
+export function getIdentityApiKey(): string | undefined {
+  return readEnv("AUTHTOOLKIT_IDENTITY_API_KEY");
+}

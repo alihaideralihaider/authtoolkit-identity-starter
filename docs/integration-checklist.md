@@ -2,7 +2,8 @@
 
 - [ ] Create an AuthToolkit Identity project.
 - [ ] Copy project credentials into `.env.local`.
-- [ ] Set `AUTHTOOLKIT_IDENTITY_SESSION_SECRET` to a long random value.
+- [ ] Copy the four Identity Setup Code values into `.env.local`.
+- [ ] Rotate the API key if it was created before callback exchange support.
 - [ ] Add local allowed origin: `http://localhost:3000`.
 - [ ] Run `npm run dev`.
 - [ ] Open `/login`.

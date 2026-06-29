@@ -10,8 +10,6 @@ Landing page → Login → AuthToolkit Identity → Email/OTP verification → B
 
 AuthToolkit Identity verifies the person. Your app creates the session.
 
-`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
-
 ## 1. Landing page
 
 Route:
@@ -54,6 +52,16 @@ This server route builds a safe callback URL:
 
 Then it redirects the user to hosted AuthToolkit Identity.
 
+It sends:
+
+```text
+project_id
+return_to
+state
+```
+
+The state is random and stored in an HTTP-only cookie.
+
 ## 4. Hosted Identity flow
 
 AuthToolkit Identity handles the hosted identity experience.
@@ -68,14 +76,23 @@ Route:
 /auth/identity/callback
 ```
 
-The callback route shows safe states:
+Identity returns to the callback with:
 
-- verified
-- pending
-- missing
-- failed
+```text
+code=<generated-callback-code>
+state=<original-customer-state>
+```
 
-If the result is verified, the starter creates a minimal HTTP-only starter session cookie.
+The callback route verifies state, then exchanges the code server-side:
+
+```text
+POST https://identity.authtoolkit.com/api/identity/callback/exchange
+Authorization: Bearer <api-key>
+```
+
+If the exchange succeeds, the starter creates a minimal HTTP-only starter session cookie.
+
+Do not mark a user logged in just because the callback URL was reached. Exchange the code first.
 
 ## 6. Protected app shell
 
@@ -97,11 +114,11 @@ Route:
 /logout
 ```
 
-Logout clears the starter session cookie and redirects home.
+Logout clears the starter session cookie and redirects to `/login`.
 
 ## What to customize
 
-Replace the demo starter session with your real account/session model when building a production app.
+Replace the starter session with your real account/session model when building a production app.
 
 ## FAQ: How does AuthToolkit Identity login work?
 
@@ -138,7 +155,7 @@ Your app says: “Great, I will create a session and let them into my app.”
 
 ### Does the SDK create my app session?
 
-No. In v0.1.0, the SDK gives you helpers for the Identity flow, but your app still creates its own session cookie after Identity verifies the user. The starter repo shows one simple session pattern you can copy or customize.
+No. The SDK gives you helpers for the Identity flow, but your app still creates its own session cookie after Identity verifies the user and your backend exchanges the callback code. The starter repo shows one simple session pattern you can copy or customize.
 
 ### What is a callback URL?
 
@@ -156,7 +173,7 @@ For local testing, it might be:
 http://localhost:3000/auth/identity/callback
 ```
 
-Your callback page receives the Identity result, checks it, creates your app session, and redirects the user to the right place.
+Your callback page receives `code` and `state`, verifies state, exchanges the code, creates your app session, and redirects the user to the right place.
 
 Examples:
 
@@ -217,7 +234,7 @@ The starter repo already includes this pattern:
 https://github.com/alihaideralihaider/authtoolkit-identity-starter
 ```
 
-Server secrets stay in `.env.local`. Do not put the API key or access evaluation secret in browser code.
+Server secrets stay in `.env.local`. Do not put the API key in browser code.
 
 ### What is the difference between the starter repo and the SDK?
 

@@ -13,7 +13,9 @@ Rules:
 - Keep AuthToolkit Identity server secrets server-only.
 - Do not put server secrets in NEXT_PUBLIC_*.
 - Keep /auth/identity/start and /auth/identity/callback safe.
-- Replace the demo starter session with my app account/session model.
+- Do not mark a user logged in just because the callback URL was reached.
+- Exchange the callback code before creating my app session.
+- Replace the starter session with my app account/session model.
 - Keep logout working.
 - Update README with any new env variables.
 

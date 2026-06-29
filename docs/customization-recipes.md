@@ -68,9 +68,9 @@ Keep the logout button visible somewhere in the protected shell.
 
 ## Add user/account display
 
-The starter session only stores demo connection data.
+The starter session only stores the verified Identity user returned by callback exchange.
 
-For a real app, replace the demo session with your account lookup after callback verification.
+For a real app, replace the starter session with your account lookup after callback exchange.
 
 Suggested display fields:
 
@@ -85,8 +85,8 @@ Do not display raw tokens, API keys, or provider payloads.
 
 1. Push this repo to GitHub.
 2. Import it into Vercel.
-3. Add all server-only env variables in Vercel project settings.
-4. Add public env variables.
+3. Add `AUTHTOOLKIT_IDENTITY_API_KEY` in Vercel project settings as a server-only value.
+4. Add the other three Identity Setup Code values.
 5. Add your Vercel app origin to AuthToolkit Identity allowed return origins.
 6. Deploy.
 

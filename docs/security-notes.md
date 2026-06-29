@@ -1,32 +1,21 @@
 # Security notes
 
-## Server-only env variables
+## Environment variables
 
-These must stay server-only:
+The starter uses the same four values shown in Identity Setup Code:
 
-- `AUTHTOOLKIT_IDENTITY_BASE_URL`
-- `AUTHTOOLKIT_IDENTITY_PROJECT_ID`
-- `AUTHTOOLKIT_IDENTITY_CLIENT_ID`
-- `AUTHTOOLKIT_IDENTITY_API_KEY`
-- `AUTHTOOLKIT_IDENTITY_ACCESS_EVALUATION_SECRET`
-- `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`
+```text
+AUTHTOOLKIT_IDENTITY_BASE_URL=https://identity.authtoolkit.com
+AUTHTOOLKIT_IDENTITY_PROJECT_ID=<selected-real-project-id>
+AUTHTOOLKIT_IDENTITY_API_KEY=<paste-api-key-here>
+NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL=https://identity.authtoolkit.com
+```
 
-Server secrets stay in `.env.local` during local development. Never put the API key or access evaluation secret in browser code or `NEXT_PUBLIC_*`.
+`AUTHTOOLKIT_IDENTITY_API_KEY` is server-only. Keep it in `.env.local` during local development. Never put it in browser code, logs, or `NEXT_PUBLIC_*`.
 
 AuthToolkit Identity verifies the person. Your app creates the session. The app session cookie belongs to your app.
 
-`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
-
-## Public env variables
-
-These may be exposed to browser code:
-
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL`
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PROJECT_ID`
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_CLIENT_ID`
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PUBLISHABLE_KEY`
-
-Public values identify your Identity project. They are not a replacement for server-side checks.
+Only `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL` is browser-safe in the starter.
 
 ## Callback allowlist
 
@@ -48,21 +37,29 @@ Do not allow wildcard origins unless you fully understand the risk.
 
 Allowed return origins protect users from unsafe redirects. If a return URL is not allowed, AuthToolkit Identity blocks it and shows a safe error.
 
-## Session secret
+## Callback exchange
 
-`AUTHTOOLKIT_IDENTITY_SESSION_SECRET` signs the starter session cookie.
+The callback URL being reached is not enough to log a user in.
 
-Use a long random value. Rotate it if it leaks.
+The starter must:
 
-If you rotate it, existing starter sessions become invalid, which is usually safe.
+1. Generate a random state in `/auth/identity/start`.
+2. Store that state in an HTTP-only cookie.
+3. Verify the returned state in `/auth/identity/callback`.
+4. Exchange the returned code with AuthToolkit Identity using the server-only API key.
+5. Create the starter session only after exchange succeeds.
+
+## Starter session
+
+The starter signs its session cookie server-side after callback exchange succeeds.
+
+If you rotate the API key, existing starter sessions become invalid because the starter uses the server-only API key to sign the starter cookie.
 
 ## Logging
 
 Do not log:
 
 - API keys
-- access evaluation secrets
-- session secrets
 - raw provider responses if they may contain sensitive data
 - auth headers
 - cookies
@@ -78,3 +75,5 @@ Rotate Identity credentials if:
 - you suspect compromise
 
 After rotation, update your deployment environment variables and restart/redeploy the app.
+
+If your API key was created before callback exchange support, rotate it before using real login.

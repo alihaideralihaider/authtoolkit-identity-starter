@@ -10,8 +10,6 @@ Landing page → Login → AuthToolkit Identity → Email/OTP verification → B
 
 AuthToolkit Identity verifies the person. Your app creates the session.
 
-`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
-
 This starter is for developers and vibe coders who want a clear, cloneable example without a custom auth system, database, or enterprise dashboard.
 
 ## What you get
@@ -48,8 +46,7 @@ At a high level:
 
 1. Create an Identity project.
 2. Copy the starter credentials into `.env.local`.
-3. Set a long random `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`.
-4. Add this local origin to your Identity allowed return origins:
+3. Add this local origin to your Identity allowed return origins:
 
 ```text
 http://localhost:3000
@@ -79,41 +76,38 @@ Use the SDK for an existing app:
 npm install @authtoolkit/identity
 ```
 
-Install `@authtoolkit/identity` for helpers, then create your own app session in your callback route. The SDK gives existing apps AuthToolkit Identity helpers; it does not replace your whole app or create your app session for you.
+Install `@authtoolkit/identity` for helpers, then create your own app session in your callback route after the callback exchange succeeds. The SDK gives existing apps AuthToolkit Identity helpers; it does not replace your whole app or create your app session for you.
 
 ### Does the SDK create my app session?
 
-No. In v0.1.0, the SDK gives you helpers for the Identity flow, but your app still creates its own session cookie after Identity verifies the user. The starter repo shows one simple session pattern you can copy or customize.
+No. The SDK gives you helpers for the Identity flow, but your app still creates its own session cookie after Identity verifies the user and your backend exchanges the callback code. The starter repo shows one simple session pattern you can copy or customize.
 
 ## Environment variables
 
-Server-only values stay on the server and must never go in `NEXT_PUBLIC_*`:
+Use the same four values shown in Identity Setup Code:
 
-- `AUTHTOOLKIT_IDENTITY_BASE_URL`
-- `AUTHTOOLKIT_IDENTITY_PROJECT_ID`
-- `AUTHTOOLKIT_IDENTITY_CLIENT_ID`
-- `AUTHTOOLKIT_IDENTITY_API_KEY`
-- `AUTHTOOLKIT_IDENTITY_ACCESS_EVALUATION_SECRET`
-- `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`
+```text
+AUTHTOOLKIT_IDENTITY_BASE_URL=https://identity.authtoolkit.com
+AUTHTOOLKIT_IDENTITY_PROJECT_ID=<selected-real-project-id>
+AUTHTOOLKIT_IDENTITY_API_KEY=<paste-api-key-here>
+NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL=https://identity.authtoolkit.com
+```
 
-Browser-safe values may use `NEXT_PUBLIC_*`:
-
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL`
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PROJECT_ID`
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_CLIENT_ID`
-- `NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PUBLISHABLE_KEY`
+`AUTHTOOLKIT_IDENTITY_API_KEY` stays server-only. Do not put it in browser code, logs, or `NEXT_PUBLIC_*`.
 
 Use `.env.example` as the template. Do not commit `.env.local`.
 
-Server secrets stay in `.env.local` during local development. Do not put the API key or access evaluation secret in browser code.
+Older API keys may need rotation if they were created before callback exchange support.
 
 ## Test the protected shell
 
 Before signing in, opening `/app` should send you to `/login`.
 
-After a verified Identity callback, the starter creates a minimal signed HTTP-only demo session and `/app` opens.
+After Identity redirects back with `code` and `state`, the starter verifies state, exchanges the code at `/api/identity/callback/exchange`, creates a signed HTTP-only starter session, and `/app` opens.
 
 That session is intentionally small. Replace it with your app account model when you build a real product.
+
+Do not mark a user logged in just because the callback URL was reached. Exchange the code first.
 
 Your app owns account pages, cart, orders, dashboard, permissions, app data, and the session cookie.
 

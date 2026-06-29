@@ -12,10 +12,21 @@ export default async function ProtectedAppPage() {
         <span className="badge">Identity connected</span>
         <h1>Welcome to your protected app shell</h1>
         <p>
-          This page is protected by a minimal starter session cookie. Replace this
-          demo session with your app account lookup when you integrate for real.
+          This page is protected by a starter-owned session cookie created only
+          after the Identity callback exchange succeeds.
         </p>
-        <pre>{JSON.stringify({ provider: session.provider, status: session.status, connectedAt: session.connectedAt }, null, 2)}</pre>
+        <pre>{JSON.stringify({
+          provider: session.provider,
+          status: session.status,
+          connectedAt: session.connectedAt,
+          identityUser: {
+            id: session.identityUser.id,
+            email: session.identityUser.email,
+            phone: session.identityUser.phone,
+            emailVerified: session.identityUser.emailVerified,
+            phoneVerified: session.identityUser.phoneVerified
+          }
+        }, null, 2)}</pre>
         <LogoutButton />
       </section>
     </main>

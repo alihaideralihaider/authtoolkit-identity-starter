@@ -19,8 +19,7 @@ Starter QA passed for the local starter shell. The app runs locally, core routes
 | `/` | Passed | HTTP 200. Landing page shows "Add AuthToolkit Identity to your app" and links to login. |
 | `/login` | Passed | HTTP 200. Page shows "Continue with AuthToolkit Identity". |
 | `/auth/identity/start` | Passed | HTTP 307 to AuthToolkit Identity hosted flow with local callback URL. No raw secrets exposed. |
-| `/auth/identity/callback` | Passed | HTTP 200. Missing state renders a safe "Missing Identity result" state. |
-| `/auth/identity/callback?verified=true` | Passed with expected local setup warning | HTTP 500 safe failure because `AUTHTOOLKIT_IDENTITY_SESSION_SECRET` was not configured locally. The page showed a safe failure state and did not expose env values. |
+| `/auth/identity/callback` | Passed | Redirects safely to `/login?identity_error=invalid_state` when state/code are missing. |
 | `/app` | Passed | Without a starter session, redirects to `/login`. |
 | `/logout` | Passed | Redirects home safely. |
 
@@ -45,7 +44,7 @@ The docs explain how to create an Identity project, copy environment values, add
 - Server-only env names are not exposed through browser pages.
 - `.env.local` is ignored.
 - Session cookie is HTTP-only.
-- Starter session is signed with `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`.
+- Starter session is signed server-side after callback exchange succeeds.
 - Callback route does not dump raw upstream Identity responses.
 - Protected `/app` checks the starter session before rendering.
 - No raw secrets were printed in QA output or committed.
@@ -54,7 +53,7 @@ The docs explain how to create an Identity project, copy environment values, add
 
 - A beginner needed a more detailed setup guide than the original README provided.
 - README had too much detail for a quick-start front door.
-- The verified callback path requires `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`. Without it, the page fails safely. This is expected until a developer creates `.env.local`.
+- Old proof-only callback states were replaced with the callback exchange contract.
 
 ## Fixes made
 

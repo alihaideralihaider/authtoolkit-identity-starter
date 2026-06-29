@@ -10,8 +10,6 @@ Landing page → Login → AuthToolkit Identity → Email/OTP verification → B
 
 AuthToolkit Identity verifies the person. Your app creates the session.
 
-`@authtoolkit/identity v0.1.0 does not create full app sessions yet.`
-
 ## 1. Clone the repo
 
 ```bash
@@ -37,9 +35,7 @@ You need the project credentials from that Identity project before the hosted si
 
 Copy the Identity values into your local environment file.
 
-You will need server-only values for the starter backend and public values for browser-safe project display.
-
-Never paste server secrets into browser code or `NEXT_PUBLIC_*` variables.
+Use the same four values shown in Identity Setup Code.
 
 ## 5. Create `.env.local`
 
@@ -49,31 +45,18 @@ cp .env.example .env.local
 
 Fill in the values in `.env.local`.
 
-Server-only values:
-
 ```text
 AUTHTOOLKIT_IDENTITY_BASE_URL=https://identity.authtoolkit.com
-AUTHTOOLKIT_IDENTITY_PROJECT_ID=...
-AUTHTOOLKIT_IDENTITY_CLIENT_ID=...
-AUTHTOOLKIT_IDENTITY_API_KEY=...
-AUTHTOOLKIT_IDENTITY_ACCESS_EVALUATION_SECRET=...
-AUTHTOOLKIT_IDENTITY_SESSION_SECRET=...
-```
-
-Public browser-safe values:
-
-```text
+AUTHTOOLKIT_IDENTITY_PROJECT_ID=<selected-real-project-id>
+AUTHTOOLKIT_IDENTITY_API_KEY=<paste-api-key-here>
 NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_BASE_URL=https://identity.authtoolkit.com
-NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PROJECT_ID=...
-NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_CLIENT_ID=...
-NEXT_PUBLIC_AUTHTOOLKIT_IDENTITY_PUBLISHABLE_KEY=...
 ```
 
-Use a long random value for `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`. It signs the starter demo session cookie.
+Server secrets stay in `.env.local`. Do not commit `.env.local`, and do not put the API key in browser code.
 
-Server secrets stay in `.env.local`. Do not commit `.env.local`, and do not put the API key or access evaluation secret in browser code.
+The app session cookie belongs to your app. AuthToolkit Identity verifies the person; your app creates the session after callback exchange.
 
-The app session cookie belongs to your app. SDK v0.1 does not replace full auth/session management.
+If your API key was created before callback exchange support, rotate it in Identity before using real login.
 
 ## 6. Add the callback URL to Identity allowed origins
 
@@ -127,7 +110,7 @@ On `/login`, click:
 Continue with AuthToolkit Identity
 ```
 
-The starter redirects through `/auth/identity/start` to hosted AuthToolkit Identity.
+The starter redirects through `/auth/identity/start` to hosted AuthToolkit Identity with `project_id`, `return_to`, and a random `state` stored in an HTTP-only cookie.
 
 If your Identity env values or allowed callback origin are not set yet, the hosted flow may not complete. Fix the setup and try again.
 
@@ -139,18 +122,30 @@ The callback route is:
 /auth/identity/callback
 ```
 
-Safe callback states include:
+Identity returns to the callback with:
 
-- verified
-- pending
-- missing
-- failed
+```text
+code=<generated-callback-code>
+state=<original-customer-state>
+```
 
-If the callback is opened directly without an Identity result, it should show a safe missing state.
+The starter verifies the state cookie, then posts the code to:
 
-If Identity verifies the user, the starter creates a minimal signed HTTP-only demo session.
+```text
+https://identity.authtoolkit.com/api/identity/callback/exchange
+```
 
-For your production app, replace that demo session with your own account, cart, orders, dashboard, permissions, and session-cookie model.
+The request uses:
+
+```text
+Authorization: Bearer <api-key>
+```
+
+If exchange succeeds, the starter creates a minimal signed HTTP-only session. If exchange fails, it redirects safely to `/login`.
+
+Do not mark a user logged in just because the callback URL was reached. Exchange the code first.
+
+For your production app, replace that starter session with your own account, cart, orders, dashboard, permissions, and session-cookie model.
 
 ## 11. Open protected `/app`
 
@@ -194,7 +189,7 @@ Do not use static export. This starter needs server behavior for callback and se
 
 Before deploying:
 
-- Add all server-only env values to your host secret settings.
-- Add all public env values to your host environment settings.
+- Add the API key to your host secret settings.
+- Add the other Setup Code values to your host environment settings.
 - Add your production origin to AuthToolkit Identity allowed return origins.
 - Test `/`, `/login`, `/auth/identity/start`, `/auth/identity/callback`, `/app`, and `/logout`.

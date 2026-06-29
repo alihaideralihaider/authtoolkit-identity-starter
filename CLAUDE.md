@@ -26,21 +26,19 @@ Important files:
 Never move these into browser code or `NEXT_PUBLIC_*`:
 
 - `AUTHTOOLKIT_IDENTITY_API_KEY`
-- `AUTHTOOLKIT_IDENTITY_ACCESS_EVALUATION_SECRET`
-- `AUTHTOOLKIT_IDENTITY_SESSION_SECRET`
 
 Do not print raw secrets in terminal output, logs, docs, or comments.
 
 ## Callback safety
 
-Do not remove the callback safety states:
+Do not create a session just because the callback URL was reached.
 
-- verified
-- pending
-- missing
-- failed
+Keep the callback flow strict:
 
-Keep user-facing callback errors simple and safe.
+1. Verify the returned state against the HTTP-only state cookie.
+2. Exchange the returned code with AuthToolkit Identity.
+3. Create the starter session only after exchange succeeds.
+4. Keep user-facing callback errors simple and safe.
 
 ## Protect new pages
 
